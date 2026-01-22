@@ -21,3 +21,28 @@ impl Filter<ScoredPostsQuery, PostCandidate> for SelfTweetFilter {
         Ok(FilterResult { kept, removed })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::candidate_pipeline::candidate::PostCandidate;
+
+    #[tokio::test]
+    async fn test_self_tweet_filter() {
+        let filter = SelfTweetFilter;
+        let mut query = ScoredPostsQuery::default();
+        query.user_id = 123;
+        
+        let candidates = vec![
+            PostCandidate { author_id: 123, tweet_id: 1, ..Default::default() },
+            PostCandidate { author_id: 456, tweet_id: 2, ..Default::default() },
+        ];
+        
+        let result = filter.filter(&query, candidates).await.unwrap();
+        
+        assert_eq!(result.kept.len(), 1);
+        assert_eq!(result.kept[0].author_id, 456);
+        assert_eq!(result.removed.len(), 1);
+        assert_eq!(result.removed[0].author_id, 123);
+    }
+}

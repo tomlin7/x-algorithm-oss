@@ -1,4 +1,19 @@
-# X For You Feed Algorithm
+# X-Algorithm OSS
+
+> This repository is a buildable version of the X recommendation algorithm maintained by me. It replaces internal proprietary dependencies with standard open-source alternatives to allow for local experimentation and development.
+
+
+## Fixes
+
+- **Build Support**: Ported from proprietary internal infra to a standard Rust workspace.
+- **Open Source Stack**: Replaced internal libraries (`xai_*`) with standard `tokio`, `tonic`, `env_logger`, etc.
+- **Proto Recovery**: Reverse-engineered missing Protocol Buffer definitions.
+- **Critical Bug Fixes**: Corrected retweet deduplication logic which previously failed to deduplicate original tweets of seen retweets.
+- **Testing**: Added unit tests for key filters.
+
+---
+---
+---
 
 This repository contains the core recommendation system powering the "For You" feed on X. It combines in-network content (from accounts you follow) with out-of-network content (discovered through ML-based retrieval) and ranks everything using a Grok-based transformer model.
 

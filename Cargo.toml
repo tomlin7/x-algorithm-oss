@@ -1,0 +1,11 @@
+[workspace]
+members = [
+    "candidate-pipeline",
+    "home-mixer",
+    "thunder",
+    "proto",
+    "visibility-filtering",
+    "twitter-context-proto",
+    "recsys-proto"
+]
+resolver = "2"

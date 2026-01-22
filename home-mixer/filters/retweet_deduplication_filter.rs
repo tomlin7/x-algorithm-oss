@@ -31,12 +31,54 @@ impl Filter<ScoredPostsQuery, PostCandidate> for RetweetDeduplicationFilter {
                 }
                 None => {
                     // Mark this original tweet ID as seen so retweets of it get filtered
-                    seen_tweet_ids.insert(candidate.tweet_id as u64);
-                    kept.push(candidate);
+                    if seen_tweet_ids.insert(candidate.tweet_id as u64) {
+                        kept.push(candidate);
+                    } else {
+                        removed.push(candidate);
+                    }
                 }
             }
         }
 
         Ok(FilterResult { kept, removed })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::candidate_pipeline::candidate::PostCandidate;
+
+    #[tokio::test]
+    async fn test_retweet_deduplication_logic() {
+        let filter = RetweetDeduplicationFilter;
+        let query = ScoredPostsQuery::default();
+        
+        let mut candidates = vec![
+            // Retweet of 10 comes first
+            PostCandidate { 
+                tweet_id: 100, 
+                retweeted_tweet_id: Some(10), 
+                ..Default::default() 
+            },
+            // Original 10 comes second
+            PostCandidate { 
+                tweet_id: 10, 
+                retweeted_tweet_id: None, 
+                ..Default::default() 
+            },
+        ];
+        
+        let result = filter.filter(&query, candidates).await.unwrap();
+        
+        // Expected behavior:
+        // 1. 100 is processed. retweeted_id=10. seen(10) -> true. Keep 100.
+        // 2. 10 is processed. tweet_id=10. seen(10) -> false. Remove 10.
+        // Result: Keep 100 (the retweet).
+        
+        assert_eq!(result.kept.len(), 1, "Should keep exactly one candidate");
+        assert_eq!(result.kept[0].tweet_id, 100, "Should keep the retweet (first occurrence of content)");
+        assert_eq!(result.removed.len(), 1, "Should remove the original tweet as duplicate");
+        assert_eq!(result.removed[0].tweet_id, 10, "Should remove tweet 10");
     }
 }

@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package xai_home_mixer_proto;
+
+service ScoredPostsService {
+  rpc GetScoredPosts (ScoredPostsQuery) returns (ScoredPostsResponse);
+}
+
+message ScoredPostsQuery {
+  uint64 viewer_id = 1;
+  uint64 client_app_id = 2;
+  string country_code = 3;
+  string language_code = 4;
+  repeated uint64 seen_ids = 5;
+  repeated uint64 served_ids = 6;
+  bool in_network_only = 7;
+  bool is_bottom_request = 8;
+  repeated ImpressionBloomFilterEntry bloom_filter_entries = 9;
+}
+
+message ImpressionBloomFilterEntry {
+  uint64 tweet_id = 1;
+}
+
+message ScoredPost {
+  uint64 tweet_id = 1;
+  uint64 author_id = 2;
+  uint64 retweeted_tweet_id = 3;
+  uint64 retweeted_user_id = 4;
+  uint64 in_reply_to_tweet_id = 5;
+  float score = 6;
+  bool in_network = 7;
+  ServedType served_type = 8;
+  uint64 last_scored_timestamp_ms = 9;
+  uint64 prediction_request_id = 10;
+  repeated ScoredPost ancestors = 11;
+  repeated string screen_names = 12;
+  int32 visibility_reason = 13;
+}
+
+enum ServedType {
+  SERVED_TYPE_UNSPECIFIED = 0;
+  SERVED_TYPE_IN_NETWORK = 1;
+  SERVED_TYPE_OUT_OF_NETWORK = 2;
+}
+
+message ScoredPostsResponse {
+  repeated ScoredPost scored_posts = 1;
+}

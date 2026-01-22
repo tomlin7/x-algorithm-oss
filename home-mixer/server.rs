@@ -23,7 +23,7 @@ impl HomeMixerServer {
 
 #[tonic::async_trait]
 impl pb::scored_posts_service_server::ScoredPostsService for HomeMixerServer {
-    #[xai_stats_macro::receive_stats]
+    // #[xai_stats_macro::receive_stats]
     async fn get_scored_posts(
         &self,
         request: Request<pb::ScoredPostsQuery>,

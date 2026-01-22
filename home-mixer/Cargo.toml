@@ -1,0 +1,28 @@
+[package]
+name = "xai-home-mixer"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "lib.rs"
+
+[[bin]]
+name = "home-mixer"
+path = "main.rs"
+
+[dependencies]
+xai-candidate-pipeline = { path = "../candidate-pipeline" }
+xai-home-mixer-proto = { path = "../proto" }
+xai-visibility-filtering = { path = "../visibility-filtering" }
+xai-twittercontext-proto = { path = "../twitter-context-proto" }
+xai-recsys-proto = { path = "../recsys-proto" }
+tonic = "0.10"
+tonic-reflection = "0.10"
+tokio = { version = "1.0", features = ["full", "macros"] }
+clap = { version = "4.0", features = ["derive"] }
+log = "0.4"
+env_logger = "0.10"
+anyhow = "1.0"
+serde = "1.0"
+rand = "0.8"
+uuid = { version = "1.0", features = ["v4"] }
