@@ -42,6 +42,8 @@ enum ServedType {
   SERVED_TYPE_UNSPECIFIED = 0;
   SERVED_TYPE_IN_NETWORK = 1;
   SERVED_TYPE_OUT_OF_NETWORK = 2;
+  FOR_YOU_IN_NETWORK = 3;
+  FOR_YOU_PHOENIX_RETRIEVAL = 4;
 }
 
 message ScoredPostsResponse {

@@ -1,6 +1,6 @@
 use crate::util;
 use std::any::type_name_of_val;
-use tonic::async_trait;
+use async_trait::async_trait;
 
 /// Scorers update candidate fields (like a score field) and run sequentially
 #[async_trait]

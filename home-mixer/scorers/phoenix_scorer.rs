@@ -1,7 +1,6 @@
 use crate::candidate_pipeline::candidate::{PhoenixScores, PostCandidate};
 use crate::candidate_pipeline::query::ScoredPostsQuery;
 use crate::clients::phoenix_prediction_client::PhoenixPredictionClient;
-use crate::util::request_util;
 use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -22,7 +21,7 @@ impl Scorer<ScoredPostsQuery, PostCandidate> for PhoenixScorer {
         candidates: &[PostCandidate],
     ) -> Result<Vec<PostCandidate>, String> {
         let user_id = query.user_id as u64;
-        let prediction_request_id = request_util::generate_request_id();
+        let prediction_request_id = 123456789; // Dummy ID
         let last_scored_at_ms = Self::current_timestamp_millis();
 
         if let Some(sequence) = &query.user_action_sequence {
@@ -41,7 +40,7 @@ impl Scorer<ScoredPostsQuery, PostCandidate> for PhoenixScorer {
 
             let result = self
                 .phoenix_client
-                .predict(user_id, sequence.clone(), tweet_infos)
+                .predict(user_id as i64, sequence.clone(), tweet_infos)
                 .await;
 
             if let Ok(response) = result {

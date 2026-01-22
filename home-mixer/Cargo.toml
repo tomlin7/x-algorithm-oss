@@ -16,13 +16,20 @@ xai-home-mixer-proto = { path = "../proto" }
 xai-visibility-filtering = { path = "../visibility-filtering" }
 xai-twittercontext-proto = { path = "../twitter-context-proto" }
 xai-recsys-proto = { path = "../recsys-proto" }
-tonic = "0.10"
+xai-stats-macro = { path = "../xai-stats-macro" }
+xai-post-text = { path = "../xai-post-text" }
+xai-strato = { path = "../xai-strato" }
+xai-recsys-aggregation = { path = "../xai-recsys-aggregation" }
+xai-uas-thrift = { path = "../xai-uas-thrift" }
+xai-thunder-proto = { path = "../thunder-proto" }
+futures = "0.3"
+serde = { version = "1.0", features = ["derive"] }
+tonic = { version = "0.10", features = ["gzip"] }
 tonic-reflection = "0.10"
 tokio = { version = "1.0", features = ["full", "macros"] }
 clap = { version = "4.0", features = ["derive"] }
 log = "0.4"
 env_logger = "0.10"
 anyhow = "1.0"
-serde = "1.0"
 rand = "0.8"
 uuid = { version = "1.0", features = ["v4"] }

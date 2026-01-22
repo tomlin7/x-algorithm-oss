@@ -26,14 +26,16 @@ impl Hydrator<ScoredPostsQuery, PostCandidate> for SubscriptionHydrator {
         let client = &self.tes_client;
 
         let tweet_ids = candidates.iter().map(|c| c.tweet_id).collect::<Vec<_>>();
+        let tweet_ids_u64: Vec<u64> = tweet_ids.iter().map(|&id| id as u64).collect();
 
-        let post_features = client.get_subscription_author_ids(tweet_ids.clone()).await;
+        let post_features = client.get_subscription_author_ids(tweet_ids_u64).await;
         let post_features = post_features.map_err(|e| e.to_string())?;
 
         let mut hydrated_candidates = Vec::with_capacity(candidates.len());
         for tweet_id in tweet_ids {
-            let post_features = post_features.get(&tweet_id);
-            let subscription_author_id = post_features.and_then(|x| *x);
+            let tweet_id_u64 = tweet_id as u64;
+            let post_features = post_features.get(&tweet_id_u64);
+            let subscription_author_id = post_features.copied();
             let hydrated = PostCandidate {
                 subscription_author_id,
                 ..Default::default()

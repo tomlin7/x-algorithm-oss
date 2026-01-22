@@ -72,7 +72,7 @@ impl WeightedScorer {
     fn vqv_weight_eligibility(candidate: &PostCandidate) -> f64 {
         if candidate
             .video_duration_ms
-            .is_some_and(|ms| ms > p::MIN_VIDEO_DURATION_MS)
+            .is_some_and(|ms| ms as i64 > p::MIN_VIDEO_DURATION_MS as i64)
         {
             p::VQV_WEIGHT
         } else {

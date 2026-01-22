@@ -1,7 +1,7 @@
 use crate::util;
 use std::any::type_name_of_val;
 use std::sync::Arc;
-use tonic::async_trait;
+use async_trait::async_trait;
 
 // A side-effect is an action run that doesn't affect the pipeline result from being returned
 #[derive(Clone)]

@@ -38,7 +38,7 @@ async fn main() -> anyhow::Result<()> {
     
     let reflection_service = Builder::configure()
         .register_encoded_file_descriptor_set(pb::FILE_DESCRIPTOR_SET)
-        .build_v1()?;
+        .build()?;
 
     info!("Server listening on {}", addr);
 
@@ -49,9 +49,7 @@ async fn main() -> anyhow::Result<()> {
                 .max_decoding_message_size(params::MAX_GRPC_MESSAGE_SIZE)
                 .max_encoding_message_size(params::MAX_GRPC_MESSAGE_SIZE)
                 .accept_compressed(CompressionEncoding::Gzip)
-                .accept_compressed(CompressionEncoding::Zstd)
-                .send_compressed(CompressionEncoding::Gzip)
-                .send_compressed(CompressionEncoding::Zstd),
+                .send_compressed(CompressionEncoding::Gzip),
         )
         .serve(addr)
         .await?;

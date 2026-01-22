@@ -5,3 +5,6 @@ edition = "2021"
 
 [lib]
 path = "lib.rs"
+[dependencies]
+xai-twittercontext-proto = { path = "../twitter-context-proto" }
+tonic = "0.10"

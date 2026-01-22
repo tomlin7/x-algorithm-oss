@@ -1,5 +1,5 @@
 use crate::candidate_pipeline::query::ScoredPostsQuery;
-use crate::clients::uas_fetcher::{UserActionSequenceFetcher, UserActionSequenceOps};
+use crate::clients::uas_fetcher::UserActionSequenceFetcher;
 use crate::params as p;
 use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -14,7 +14,6 @@ use xai_recsys_proto::{
     AggregatedUserActionList, Mask, MaskType, UserActionSequence, UserActionSequenceDataContainer,
     UserActionSequenceMeta, user_action_sequence_data_container::Data as ProtoDataContainer,
 };
-use xai_uas_thrift::convert::thrift_to_proto_aggregated_user_action;
 use xai_uas_thrift::user_action_sequence::{
     AggregatedUserAction as ThriftAggregatedUserAction,
     UserActionSequence as ThriftUserActionSequence,
@@ -33,9 +32,9 @@ impl UserActionSeqQueryHydrator {
     pub fn new(uas_fetcher: Arc<UserActionSequenceFetcher>) -> Self {
         Self {
             uas_fetcher,
-            global_filter: Arc::new(KeepOriginalUserActionFilter::new()),
+            global_filter: Arc::new(xai_recsys_aggregation::filters::DummyKeepOriginalUserActionFilter::new()),
             aggregator: Arc::new(DefaultAggregator),
-            post_filters: vec![Arc::new(DenseAggregatedActionFilter::new())],
+            post_filters: vec![Arc::new(xai_recsys_aggregation::filters::DummyDenseAggregatedActionFilter::new())],
         }
     }
 }
@@ -111,7 +110,7 @@ impl UserActionSeqQueryHydrator {
             user_id,
             original_metadata,
             aggregated_actions,
-            self.aggregator.name(),
+            &self.aggregator.name(),
         )
     }
 }
@@ -151,10 +150,7 @@ fn convert_to_proto_sequence(
     // Convert thrift aggregated actions to proto
     let mut proto_agg_actions = Vec::with_capacity(aggregated_actions.len());
     for action in aggregated_actions {
-        proto_agg_actions.push(
-            thrift_to_proto_aggregated_user_action(action)
-                .map_err(|e| format!("Failed to convert aggregated action: {}", e))?,
-        );
+        proto_agg_actions.push(action);
     }
 
     let aggregation_time_ms = SystemTime::now()

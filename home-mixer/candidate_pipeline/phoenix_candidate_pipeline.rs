@@ -191,9 +191,9 @@ impl PhoenixCandidatePipeline {
         );
         let vf_client = Arc::new(
             ProdVisibilityFilteringClient::new(
-                S2S_CHAIN_PATH.clone(),
-                S2S_CRT_PATH.clone(),
-                S2S_KEY_PATH.clone()
+                S2S_CHAIN_PATH.to_string(),
+                S2S_CRT_PATH.to_string(),
+                S2S_KEY_PATH.to_string()
             )
             .await
             .expect("Failed to create VF client"),

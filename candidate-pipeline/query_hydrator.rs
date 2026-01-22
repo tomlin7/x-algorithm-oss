@@ -1,5 +1,5 @@
 use std::any::{Any, type_name_of_val};
-use tonic::async_trait;
+use async_trait::async_trait;
 
 use crate::util;
 

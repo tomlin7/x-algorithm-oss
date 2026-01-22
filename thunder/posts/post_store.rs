@@ -124,7 +124,7 @@ impl PostStore {
             }
 
             // Store the full post data
-            let old = self.posts.insert(post_id, post);
+            let old = self.posts.insert(post_id, post.clone());
             if old.is_some() {
                 // if already stored - don't add it again
                 continue;
@@ -136,23 +136,24 @@ impl PostStore {
             // Use entry API to get mutable access to the appropriate user's posts timeline
             if is_original {
                 let mut user_posts_entry =
-                    self.original_posts_by_user.entry(author_id).or_default();
+                    self.original_posts_by_user.entry(author_id as i64).or_default();
                 user_posts_entry.push_back(tiny_post.clone());
             } else {
                 let mut user_posts_entry =
-                    self.secondary_posts_by_user.entry(author_id).or_default();
+                    self.secondary_posts_by_user.entry(author_id as i64).or_default();
                 user_posts_entry.push_back(tiny_post.clone());
             }
 
             let mut video_eligible = post.has_video;
 
             // If this is a retweet and the retweeted post has video, mark has_video as true
-            if !video_eligible
-                && post.is_retweet
-                && let Some(source_post_id) = post.source_post_id
-                && let Some(source_post) = self.posts.get(&source_post_id)
-            {
-                video_eligible = !source_post.is_reply && source_post.has_video;
+            // If this is a retweet and the retweeted post has video, mark has_video as true
+            if !video_eligible && post.is_retweet {
+                if let Some(source_post_id) = post.source_post_id {
+                    if let Some(source_post) = self.posts.get(&source_post_id) {
+                         video_eligible = !source_post.is_reply && source_post.has_video;
+                    }
+                }
             }
 
             if post.is_reply {
@@ -161,7 +162,7 @@ impl PostStore {
 
             // Also add to video posts timeline if post has video
             if video_eligible {
-                let mut user_posts_entry = self.video_posts_by_user.entry(author_id).or_default();
+                let mut user_posts_entry = self.video_posts_by_user.entry(author_id as i64).or_default();
                 user_posts_entry.push_back(tiny_post);
             }
         }
@@ -273,7 +274,7 @@ impl PostStore {
                 // Note: We copy the value immediately to release the read lock and avoid potential
                 // deadlock when acquiring nested read locks while a writer is waiting.
                 let light_post_iter_1 = tiny_posts_iter
-                    .filter_map(|tiny_post| self.posts.get(&tiny_post.post_id).map(|r| *r.value()));
+                    .filter_map(|tiny_post| self.posts.get(&tiny_post.post_id).map(|r| r.value().clone()));
 
                 let light_post_iter = light_post_iter_1.filter(|post| {
                     if self.deleted_posts.get(&post.post_id).is_some() {

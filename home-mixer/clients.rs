@@ -1,1 +1,9 @@
-// Dummy clients module
+pub mod strato_client;
+pub mod tweet_entity_service_client;
+pub mod gizmoduck_client;
+pub mod phoenix_prediction_client;
+pub mod phoenix_retrieval_client;
+pub mod s2s;
+pub mod socialgraph_client;
+pub mod thunder_client;
+pub mod uas_fetcher;

@@ -5,3 +5,6 @@ edition = "2021"
 
 [lib]
 path = "lib.rs"
+
+[dependencies]
+xai-uas-thrift = { path = "../xai-uas-thrift" }

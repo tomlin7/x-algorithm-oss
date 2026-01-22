@@ -8,7 +8,7 @@ use crate::source::Source;
 use futures::future::join_all;
 use log::{error, info, warn};
 use std::sync::Arc;
-use tonic::async_trait;
+use async_trait::async_trait;
 
 #[derive(Copy, Clone, Debug)]
 pub enum PipelineStage {

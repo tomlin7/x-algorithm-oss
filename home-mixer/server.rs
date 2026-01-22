@@ -36,12 +36,12 @@ impl pb::scored_posts_service_server::ScoredPostsService for HomeMixerServer {
 
         let start = Instant::now();
         let query = ScoredPostsQuery::new(
-            proto_query.viewer_id,
-            proto_query.client_app_id,
+            proto_query.viewer_id as i64,
+            proto_query.client_app_id as i32,
             proto_query.country_code,
             proto_query.language_code,
-            proto_query.seen_ids,
-            proto_query.served_ids,
+            proto_query.seen_ids.iter().map(|&x| x as i64).collect(),
+            proto_query.served_ids.iter().map(|&x| x as i64).collect(),
             proto_query.in_network_only,
             proto_query.is_bottom_request,
             proto_query.bloom_filter_entries,
@@ -65,9 +65,9 @@ impl pb::scored_posts_service_server::ScoredPostsService for HomeMixerServer {
                     served_type: candidate.served_type.map(|t| t as i32).unwrap_or_default(),
                     last_scored_timestamp_ms: candidate.last_scored_at_ms.unwrap_or(0),
                     prediction_request_id: candidate.prediction_request_id.unwrap_or(0),
-                    ancestors: candidate.ancestors,
-                    screen_names,
-                    visibility_reason: candidate.visibility_reason.map(|r| r.into()),
+                    ancestors: candidate.ancestors.iter().map(|&id| ScoredPost { tweet_id: id, ..Default::default() }).collect(),
+                    screen_names: screen_names.into_values().collect(),
+                    visibility_reason: candidate.visibility_reason.map(|r| r.into()).unwrap_or(0),
                 }
             })
             .collect();

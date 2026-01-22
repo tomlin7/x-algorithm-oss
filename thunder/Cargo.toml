@@ -17,3 +17,10 @@ serde_json = "1.0"
 log = "0.4"
 anyhow = "1.0"
 rdkafka = { version = "0.36", features = ["cmake-build"] }
+xai-thunder-proto = { path = "../thunder-proto" }
+tonic = "0.10"
+prost = "0.12"
+lazy_static = "1.4"
+dashmap = "5.5"
+clap = { version = "4.0", features = ["derive"] }
+env_logger = "0.10"

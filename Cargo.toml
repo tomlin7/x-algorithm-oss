@@ -6,6 +6,12 @@ members = [
     "proto",
     "visibility-filtering",
     "twitter-context-proto",
-    "recsys-proto"
+    "recsys-proto",
+    "thunder-proto",
+    "xai-stats-macro",
+    "xai-post-text",
+    "xai-strato",
+    "xai-recsys-aggregation",
+    "xai-uas-thrift"
 ]
 resolver = "2"

@@ -55,8 +55,6 @@ impl ThunderServiceImpl {
     /// Create a gRPC server for this service
     pub fn server(self) -> InNetworkPostsServiceServer<Self> {
         InNetworkPostsServiceServer::new(self)
-            .accept_compressed(tonic::codec::CompressionEncoding::Zstd)
-            .send_compressed(tonic::codec::CompressionEncoding::Zstd)
     }
 
     /// Analyze found posts, calculate statistics, and report metrics
@@ -282,18 +280,19 @@ impl InNetworkPostsService for ThunderServiceImpl {
                 exclude_tweet_ids.iter().map(|&id| id as i64).collect();
 
             let start_time = Instant::now();
+            let following_user_ids_i64: Vec<i64> = following_user_ids.iter().map(|&id| id as i64).collect();
 
             // Fetch all posts (original + secondary) for the followed users
             let all_posts: Vec<LightPost> = if req.is_video_request {
                 post_store.get_videos_by_users(
-                    &following_user_ids,
+                    &following_user_ids_i64,
                     &exclude_tweet_ids,
                     start_time,
                     request_user_id,
                 )
             } else {
                 post_store.get_all_posts_by_users(
-                    &following_user_ids,
+                    &following_user_ids_i64,
                     &exclude_tweet_ids,
                     start_time,
                     request_user_id,
