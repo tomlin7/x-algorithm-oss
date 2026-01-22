@@ -5,11 +5,14 @@
 
 ## Fixes
 
-- **Build Support**: Ported from proprietary internal infra to a standard Rust workspace.
-- **Open Source Stack**: Replaced internal libraries (`xai_*`) with standard `tokio`, `tonic`, `env_logger`, etc.
-- **Proto Recovery**: Reverse-engineered missing Protocol Buffer definitions.
-- **Critical Bug Fixes**: Corrected retweet deduplication logic which previously failed to deduplicate original tweets of seen retweets.
-- **Testing**: Added unit tests for key filters.
+- **Build Support**: Successfully ported to a standard Rust workspace. All components (`home-mixer`, `thunder`, `candidate-pipeline`) compile with standard `cargo build`.
+- **Open Source Stack**: Replaced internal proprietary dependencies (`xai_*`) with standard open-source equivalents (`tokio`, `tonic`, `env_logger`).
+- **Proto Recovery**: Reverse-engineered and reconstructed missing Protocol Buffer definitions.
+- **Critical Bug Fixes**:
+    - Fixed retweet deduplication logic to correctly handle original tweets of seen retweets.
+    - Resolved `tonic` feature conflicts and compression settings.
+    - Fixed numerous type safety issues in hydrators and scorers.
+- **Testing**: Added unit tests for key filters (e.g., `SelfTweetFilter`).
 
 ---
 ---
