@@ -245,7 +245,7 @@ where
         let mut all_removed = Vec::new();
         for filter in filters.iter().filter(|f| f.enable(query)) {
             let backup = candidates.clone();
-            match filter.filter(query, candidates).await {
+            match filter.filter(query, candidates.clone()).await {
                 Ok(result) => {
                     candidates = result.kept;
                     all_removed.extend(result.removed);
@@ -258,7 +258,7 @@ where
                         filter.name(),
                         err
                     );
-                    candidates = backup;
+                    // candidates remains as backup
                 }
             }
         }

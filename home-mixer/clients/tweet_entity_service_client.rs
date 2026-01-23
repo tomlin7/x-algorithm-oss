@@ -24,7 +24,19 @@ pub struct ProdTESClient;
 
 #[tonic::async_trait]
 impl TESClient for ProdTESClient {
-    async fn get_tweet_core_datas(&self, _: Vec<u64>) -> Result<HashMap<u64, TweetCoreData>, String> { Ok(HashMap::new()) }
+    async fn get_tweet_core_datas(&self, tweet_ids: Vec<u64>) -> Result<HashMap<u64, TweetCoreData>, String> { 
+        let mut map = HashMap::new();
+        for id in tweet_ids {
+            map.insert(id, TweetCoreData {
+                author_id: 12345, 
+                source_user_id: None,
+                source_tweet_id: None,
+                in_reply_to_tweet_id: None,
+                text: format!("Simulated Tweet #{}", id),
+            });
+        }
+        Ok(map) 
+    }
     async fn get_subscription_author_ids(&self, _: Vec<u64>) -> Result<HashMap<u64, u64>, String> { Ok(HashMap::new()) }
     async fn get_tweet_media_entities(&self, _: Vec<u64>) -> Result<HashMap<u64, Vec<MediaEntity>>, String> { Ok(HashMap::new()) }
 }

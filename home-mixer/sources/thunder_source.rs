@@ -15,10 +15,19 @@ impl Source<ScoredPostsQuery, PostCandidate> for ThunderSource {
     #[xai_stats_macro::receive_stats]
     async fn get_candidates(&self, query: &ScoredPostsQuery) -> Result<Vec<PostCandidate>, String> {
         let mut candidates = Vec::with_capacity(10_000);
-        let start_id = 1_000_000; // distinct from other IDs
         
+        // Generate valid Snowflake IDs (timestamp based)
+        // Twepoch = 1288834974657
+        let twepoch = 1288834974657u64;
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_millis() as u64;
+            
+        let base_id = (now - twepoch) << 22;
+
         for i in 0..10_000 {
-            let tweet_id = (start_id + i) as i64;
+            let tweet_id = (base_id + i as u64) as i64;
             let author_id = (100 + (i % 50)) as u64; // 50 authors
             
             candidates.push(PostCandidate {
