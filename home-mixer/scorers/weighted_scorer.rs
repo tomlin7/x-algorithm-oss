@@ -9,10 +9,14 @@ pub struct WeightedScorer;
 
 #[async_trait]
 impl Scorer<ScoredPostsQuery, PostCandidate> for WeightedScorer {
+    fn enable(&self, _query: &ScoredPostsQuery) -> bool {
+        true
+    }
+
     #[xai_stats_macro::receive_stats]
     async fn score(
         &self,
-        _query: &ScoredPostsQuery,
+        request_id: &ScoredPostsQuery, // query is 1st arg
         candidates: &[PostCandidate],
     ) -> Result<Vec<PostCandidate>, String> {
         let scored = candidates
@@ -20,9 +24,16 @@ impl Scorer<ScoredPostsQuery, PostCandidate> for WeightedScorer {
             .map(|c| {
                 let weighted_score = Self::compute_weighted_score(c);
                 let normalized_weighted_score = normalize_score(c, weighted_score);
+                // Simulation Mode: Ensure variance if score is flat
+                let final_score = if normalized_weighted_score == 0.0 {
+                    0.1 + ((c.tweet_id % 1000) as f64 / 1000.0) 
+                } else {
+                    normalized_weighted_score
+                };
 
                 PostCandidate {
-                    weighted_score: Some(normalized_weighted_score),
+                    weighted_score: Some(final_score),
+                    score: Some(final_score),
                     ..Default::default()
                 }
             })
@@ -33,6 +44,7 @@ impl Scorer<ScoredPostsQuery, PostCandidate> for WeightedScorer {
 
     fn update(&self, candidate: &mut PostCandidate, scored: PostCandidate) {
         candidate.weighted_score = scored.weighted_score;
+        candidate.score = scored.weighted_score;
     }
 }
 

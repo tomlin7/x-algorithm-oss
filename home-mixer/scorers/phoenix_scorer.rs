@@ -14,6 +14,10 @@ pub struct PhoenixScorer {
 
 #[async_trait]
 impl Scorer<ScoredPostsQuery, PostCandidate> for PhoenixScorer {
+    fn enable(&self, _query: &ScoredPostsQuery) -> bool {
+        true
+    }
+
     #[xai_stats_macro::receive_stats]
     async fn score(
         &self,
@@ -24,7 +28,10 @@ impl Scorer<ScoredPostsQuery, PostCandidate> for PhoenixScorer {
         let prediction_request_id = 123456789; // Dummy ID
         let last_scored_at_ms = Self::current_timestamp_millis();
 
-        if let Some(sequence) = &query.user_action_sequence {
+        let default_sequence = xai_recsys_proto::UserActionSequence::default();
+        let sequence = query.user_action_sequence.as_ref().unwrap_or(&default_sequence);
+
+        {
             let tweet_infos: Vec<xai_recsys_proto::TweetInfo> = candidates
                 .iter()
                 .map(|c| {

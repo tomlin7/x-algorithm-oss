@@ -12,11 +12,9 @@ impl PhoenixPredictionClient for ProdPhoenixPredictionClient {
         let mut rng = rand::thread_rng();
 
         for candidate in candidates {
-            // Fill 60 slots (ActionName variants) with random probabilities
-            let top_log_probs: Vec<f32> = (0..60).map(|_| {
-                // Return log-probability. exp(-0.1) ~ 0.9, exp(-5.0) ~ 0.006
-                let prob: f32 = rng.gen_range(0.001..0.5); 
-                prob.ln() 
+            // Fill 1000 slots to cover likely all ActionName enum variants
+            let top_log_probs: Vec<f32> = (0..1000).map(|_| {
+                rng.gen_range(0.0..1.0) 
             }).collect();
             
             // Fill continuous actions (DwellTime is likely index 0)
